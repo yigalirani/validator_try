@@ -6472,9 +6472,11 @@ var import_ajv = __toESM(require_ajv(), 1);
 
 // generated/my_types.schema.json
 var my_types_schema_default = {
+  $ref: "#/definitions/User",
   $schema: "http://json-schema.org/draft-07/schema#",
   definitions: {
     User: {
+      additionalProperties: false,
       properties: {
         email: {
           type: "string"
@@ -6489,14 +6491,19 @@ var my_types_schema_default = {
           items: {
             enum: [
               "admin",
-              "guest",
-              "user"
+              "user",
+              "guest"
             ],
             type: "string"
           },
           type: "array"
         }
       },
+      required: [
+        "id",
+        "name",
+        "roles"
+      ],
       type: "object"
     }
   }
@@ -6508,9 +6515,52 @@ var validate = ajv.compile(my_types_schema_default);
 function validateUser(data) {
   const valid = validate(data);
   if (!valid) console.error(validate.errors);
-  return !!valid;
+  return valid;
+}
+
+// src/test.ts
+function runTests() {
+  let passed = 0;
+  let failed = 0;
+  function test(name, condition) {
+    if (condition) {
+      console.log(`\u2705 ${name}`);
+      passed++;
+    } else {
+      console.log(`\u274C ${name}`);
+      failed++;
+    }
+  }
+  console.log("Running is_object tests...\n");
+  test("validateUser accepts a valid user", validateUser({
+    id: 1,
+    name: "Alice",
+    roles: ["admin", "user"],
+    email: "alice@example.com"
+  }));
+  test("validateUser rejects when required field is missing", !validateUser({
+    name: "Bob",
+    roles: ["guest"]
+  }));
+  test("validateUser rejects when roles contain invalid value", !validateUser({
+    id: 2,
+    name: "Eve",
+    roles: ["superuser"]
+  }));
+  console.log(`
+Test Results: ${passed} passed, ${failed} failed`);
+  if (failed === 0) {
+    console.log("\u{1F389} All tests passed!");
+    return true;
+  } else {
+    console.log("\u{1F4A5} Some tests failed!");
+    return false;
+  }
+}
+if (import.meta.main) {
+  runTests();
 }
 export {
-  validateUser
+  runTests
 };
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=test.js.map

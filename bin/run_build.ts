@@ -1,14 +1,13 @@
 import * as esbuild from 'esbuild'
 await esbuild.build({ 
-  entryPoints: ['src/index.ts'],
+  entryPoints: ['src/test.ts'],
   platform: 'node',
   bundle: true,
   outdir: './dist', 
   sourcemap: true,
-  target: 'node10',
+  target: 'node22',
   minifySyntax:false,
   format: 'esm',
-  external:['vscode']
+  external:['node']
 })
  
-

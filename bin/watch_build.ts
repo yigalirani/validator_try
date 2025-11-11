@@ -7,6 +7,9 @@ void run({
   watchfiles:[
     'src',
     'package.json',
-    'tsconfig.json'
+    'tsconfig.json', 
+    'bin',
+    'generated'
   ]
 })
+ 
