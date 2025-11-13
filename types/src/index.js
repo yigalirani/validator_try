@@ -7,7 +7,8 @@ import { z } from "zod";
 export const WatchersSchema = z.record(z.string(), z.object({
     cmd: z.string(),
     watch: z.array(z.string()),
-}));
+    env: z.record(z.string(), z.string()).optional()
+}).strict());
 export function zod_validate(input) {
     try {
         const ans = WatchersSchema.parse(input);

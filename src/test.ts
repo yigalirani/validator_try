@@ -58,16 +58,7 @@ if (import.meta.main) {
         watch:['ere'],
         l:'sd' 
       }
-    }),
-    'extra val zod':()=>zod_validate({
-      a:{
-        cmd:'sdsds',
-        watch:['ere'],
-        l:'sd' 
-      }
-    })    
-  
-
+    })
   })
 } 
  

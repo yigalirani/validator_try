@@ -6486,6 +6486,15 @@ var my_types_schema_default = {
           cmd: {
             type: "string"
           },
+          env: {
+            additionalProperties: {
+              type: [
+                "string",
+                "number"
+              ]
+            },
+            type: "object"
+          },
           watch: {
             items: {
               type: "string"
@@ -19053,8 +19062,9 @@ var WatchersSchema = external_exports.record(
   external_exports.string(),
   external_exports.object({
     cmd: external_exports.string(),
-    watch: external_exports.array(external_exports.string())
-  })
+    watch: external_exports.array(external_exports.string()),
+    env: external_exports.record(external_exports.string(), external_exports.string()).optional()
+  }).strict()
 );
 function zod_validate(input) {
   try {
@@ -19118,13 +19128,6 @@ if (import.meta.main) {
       }
     }),
     "extra val": () => !validate({
-      a: {
-        cmd: "sdsds",
-        watch: ["ere"],
-        l: "sd"
-      }
-    }),
-    "extra val zod": () => zod_validate({
       a: {
         cmd: "sdsds",
         watch: ["ere"],

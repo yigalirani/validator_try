@@ -10,7 +10,8 @@ export const WatchersSchema = z.record(
   z.object({
     cmd: z.string(),
     watch: z.array(z.string()),
-  })
+    env:z.record(z.string(),z.string()).optional()
+  }).strict()
 );
 export function zod_validate(input:unknown){
   try{
