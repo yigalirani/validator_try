@@ -52,7 +52,7 @@ if (import.meta.main) {
         watch:['ere']
       }
     }),
-    'extra val':()=>!validate({
+    'extra val':()=>!double_validate({
       a:{
         cmd:'sdsds',
         watch:['ere'],
