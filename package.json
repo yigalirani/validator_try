@@ -7,26 +7,28 @@
     "type": "module",
     "main": "dist/index.js",
     "types": "types/src/index.d.ts",
-    "watchers":{
-      "common":[
-        "src",
-        "package.json"
-      ],
-      "tsc" : {
-        "npx":"tsc",
-        "watch":"tsconfig.json"
-      },
-      "build" : {
-        "node": "./bin/run_build.ts" 
-      },
-      "eslint" : {
-        "env":{
-          "timing":1
+    "watchers": {
+        "common": {
+            "watch": [
+                "src",
+                "package.json"
+            ]
         },
-        "npx": "eslint . --debug --color",
-        "watch":"eslint.config.mjs"
-      }
-    },  
+        "tsc": {
+            "cmd": "npx tsc",
+            "watch": "tsconfig.json"
+        },
+        "build": {
+            "cmd": "node ./bin/run_build.ts"
+        },
+        "eslint": {
+            "env": {
+                "timing": 1
+            },
+            "cmd": "npx eslint . --debug --color",
+            "watch": "eslint.config.mjs"
+        }
+    },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "node ./bin/run_build.ts"
@@ -43,6 +45,7 @@
     "dependencies": {
         "@yigal/watch_runner": "^2.0.0",
         "ajv": "^8.17.1",
-        "ts-json-schema-generator": "^2.4.0"
+        "ts-json-schema-generator": "^2.4.0",
+        "zod": "^4.1.12"
     }
 }

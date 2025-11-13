@@ -1,10 +1,7 @@
-export type User = {
-  id: number;
-  name: string;
-   email?: string;
-  roles: ("admin" | "user"|"guest")[];
-}
-/*export interface Watchers  {
-  common: string[]
- // [key: string]: { a: { npx: string } | { mode: string } | { cmd: string } } | string[]
-}*/
+
+export type Watcheers =Record<string,{
+    cmd:string,
+    watch:string[]    
+  }
+>
+ 

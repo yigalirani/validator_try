@@ -1,1 +1,1 @@
-export declare function runTests(): boolean;
+export {};

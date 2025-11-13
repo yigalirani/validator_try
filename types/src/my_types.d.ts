@@ -1,6 +1,4 @@
-export type User = {
-    id: number;
-    name: string;
-    email?: string;
-    roles: ("admin" | "user" | "guest")[];
-};
+export type Watcheers = Record<string, {
+    cmd: string;
+    watch: string[];
+}>;

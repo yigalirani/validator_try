@@ -1,43 +1,69 @@
-import { validateUser } from './index.js';
-export function runTests() {
+import { validate, zod_validate } from './index.js';
+function run_tests(tests) {
     let passed = 0;
     let failed = 0;
-    function test(name, condition) {
-        if (condition) {
-            console.log(`✅ ${name}`);
-            passed++;
+    for (const [name, fn] of Object.entries(tests)) {
+        try {
+            const result = fn();
+            if (result) {
+                console.log(`✅ ${name}`);
+                passed++;
+            }
+            else {
+                console.error(`❌ ${name}`);
+                failed++;
+            }
         }
-        else {
-            console.log(`❌ ${name}`);
+        catch (err) {
+            console.error(`💥 ${name} threw an error:`, err);
             failed++;
         }
     }
-    console.log('Running is_object tests...\n');
-    test('validateUser accepts a valid user', validateUser({
-        id: 1,
-        name: 'Alice',
-        roles: ['admin', 'user'],
-        email: 'alice@example.com'
-    }));
-    test('validateUser rejects when required field is missing', !validateUser({
-        name: 'Bob',
-        roles: ['guest']
-    }));
-    test('validateUser rejects when roles contain invalid value', !validateUser({
-        id: 2,
-        name: 'Eve',
-        roles: ['superuser']
-    }));
-    console.log(`\nTest Results: ${passed} passed, ${failed} failed`);
-    if (failed === 0) {
-        console.log('🎉 All tests passed!');
-        return true;
-    }
-    else {
-        console.log('💥 Some tests failed!');
-        return false;
-    }
+    console.log(`\nSummary: ${passed} passed, ${failed} failed.`);
+}
+function double_validate(input) {
+    const ans = zod_validate(input);
+    const ans2 = validate(input);
+    if (ans !== ans2)
+        throw 'mismatch';
+    return ans;
 }
 if (import.meta.main) {
-    runTests();
+    run_tests({
+        'empty should not fail': () => double_validate({}),
+        'array should fail': () => !double_validate([]),
+        'one with no vals': () => !double_validate({
+            a: {}
+        }),
+        'no watch': () => !double_validate({
+            a: {
+                cmd: 'sdsds'
+            }
+        }),
+        'no cmd': () => !double_validate({
+            a: {
+                watch: 'sdsds'
+            }
+        }),
+        'full': () => double_validate({
+            a: {
+                cmd: 'sdsds',
+                watch: ['ere']
+            }
+        }),
+        'extra val': () => !validate({
+            a: {
+                cmd: 'sdsds',
+                watch: ['ere'],
+                l: 'sd'
+            }
+        }),
+        'extra val zod': () => zod_validate({
+            a: {
+                cmd: 'sdsds',
+                watch: ['ere'],
+                l: 'sd'
+            }
+        })
+    });
 }

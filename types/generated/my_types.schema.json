@@ -1,36 +1,27 @@
 {
-    "$ref": "#/definitions/User",
+    "$ref": "#/definitions/Watcheers",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "definitions": {
-        "User": {
-            "additionalProperties": false,
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "number"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "roles": {
-                    "items": {
-                        "enum": [
-                            "admin",
-                            "user",
-                            "guest"
-                        ],
+        "Watcheers": {
+            "additionalProperties": {
+                "additionalProperties": false,
+                "properties": {
+                    "cmd": {
                         "type": "string"
                     },
-                    "type": "array"
-                }
+                    "watch": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    }
+                },
+                "required": [
+                    "cmd",
+                    "watch"
+                ],
+                "type": "object"
             },
-            "required": [
-                "id",
-                "name",
-                "roles"
-            ],
             "type": "object"
         }
     }
