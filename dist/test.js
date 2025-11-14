@@ -19075,28 +19075,59 @@ function zod_validate(input) {
   }
 }
 
-// src/test.ts
-function run_tests(tests) {
+// node_modules/@yigal/base_types/src/index.ts
+var green = "\x1B[40m\x1B[32m";
+var red = "\x1B[40m\x1B[31m";
+var yellow = "\x1B[40m\x1B[33m";
+var reset = "\x1B[0m";
+function is_object(value) {
+  if (value == null) return false;
+  if (typeof value !== "object" && typeof value !== "function") return false;
+  if (Array.isArray(value)) return false;
+  if (value instanceof Set) return false;
+  if (value instanceof Map) return false;
+  return true;
+}
+function is_promise(value) {
+  if (!is_object(value))
+    return false;
+  const ans = typeof value.then === "function";
+  return ans;
+}
+async function resolve_maybe_promise(a) {
+  if (is_promise(a))
+    return await a;
+  return a;
+}
+async function run_tests(...tests) {
   let passed = 0;
   let failed = 0;
-  for (const [name, fn] of Object.entries(tests)) {
+  for (const { k, v, f } of tests) {
     try {
-      const result = fn();
-      if (result) {
-        console.log(`\u2705 ${name}`);
+      const ret = f();
+      const effective_v = v ?? true;
+      const resolved = await resolve_maybe_promise(ret);
+      if (resolved === effective_v) {
+        console.log(`\u2705 ${k}: ${green}${effective_v}${reset}`);
         passed++;
       } else {
-        console.error(`\u274C ${name}`);
+        console.error(`\u274C ${k}:expected ${yellow}${effective_v}${reset}, got ${red}${resolved}${reset}`);
         failed++;
       }
     } catch (err) {
-      console.error(`\u{1F4A5} ${name} threw an error:`, err);
+      console.error(`\u{1F4A5} ${k} threw an error:`, err);
       failed++;
     }
   }
-  console.log(`
-Summary: ${passed} passed, ${failed} failed.`);
+  if (failed === 0)
+    console.log(`
+Summary:  all ${passed} passed`);
+  else
+    console.log(`
+Summary:  ${failed} failed, ${passed} passed`);
 }
+
+// src/test.ts
 function double_validate(input) {
   const ans = zod_validate(input);
   const ans2 = validate(input);
@@ -19105,35 +19136,39 @@ function double_validate(input) {
   return ans;
 }
 if (import.meta.main) {
-  run_tests({
-    "empty should not fail": () => double_validate({}),
-    "array should fail": () => !double_validate([]),
-    "one with no vals": () => !double_validate({
+  void run_tests(
+    { k: "empty", f: () => double_validate({}) },
+    { k: "array", v: false, f: () => double_validate([]) },
+    { k: "one with no vals", f: () => !double_validate({
       a: {}
-    }),
-    "no watch": () => !double_validate({
+    }) },
+    { k: "no watch", v: false, f: () => double_validate({
       a: {
         cmd: "sdsds"
       }
-    }),
-    "no cmd": () => !double_validate({
+    }) },
+    { k: "no cmd", v: false, f: () => double_validate({
       a: {
         watch: "sdsds"
       }
-    }),
-    "full": () => double_validate({
+    }) },
+    { k: "full", f: () => double_validate({
       a: {
         cmd: "sdsds",
         watch: ["ere"]
       }
-    }),
-    "extra val": () => !double_validate({
-      a: {
-        cmd: "sdsds",
-        watch: ["ere"],
-        l: "sd"
-      }
-    })
-  });
+    }) },
+    {
+      k: "extra val",
+      v: false,
+      f: () => double_validate({
+        a: {
+          cmd: "sdsds",
+          watch: ["ere"],
+          l: "sd"
+        }
+      })
+    }
+  );
 }
 //# sourceMappingURL=test.js.map
